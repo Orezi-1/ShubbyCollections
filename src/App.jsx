@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import Hero from './components/Hero';
-import About from './components/About';
-import Portfolio from './components/Portfolio';
-import Contact from './components/Contact';
 import Navigation from './components/Navigation';
-import StickyContactButton from './components/StickyContactButton';
-import Lightbox from './components/Lightbox';
+
+const About = lazy(() => import('./components/About'));
+const Portfolio = lazy(() => import('./components/Portfolio'));
+const Contact = lazy(() => import('./components/Contact'));
+const StickyContactButton = lazy(() => import('./components/StickyContactButton'));
+const Lightbox = lazy(() => import('./components/Lightbox'));
 
 function App() {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -23,23 +24,28 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
-      
-      <main>
-        <Hero />
-        <About />
-        <Portfolio onImageClick={openLightbox} />
-        <Contact />
-      </main>
+      {/* Skip link for keyboard users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-white focus:text-primary focus:px-4 focus:py-2 focus:rounded"
+      >
+        Skip to content
+      </a>
 
-      <StickyContactButton />
-      
-      {isLightboxOpen && (
-        <Lightbox 
-          image={lightboxImage} 
-          onClose={closeLightbox} 
-        />
-      )}
+      <Navigation />
+
+      <main id="main-content" tabIndex={-1}>
+        <Hero />
+        <Suspense fallback={<div className="p-8 text-center text-gray-500">Loading content…</div>}>
+          <About />
+          <Portfolio onImageClick={openLightbox} />
+          <Contact />
+          <StickyContactButton />
+          {isLightboxOpen && (
+            <Lightbox image={lightboxImage} onClose={closeLightbox} />
+          )}
+        </Suspense>
+      </main>
     </div>
   );
 }

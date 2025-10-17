@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Phone, Mail, MessageCircle } from 'lucide-react';
 
 const images = [
@@ -33,6 +33,7 @@ const swipePower = (offset, velocity) => Math.abs(offset) * velocity;
 const Hero = () => {
   const [[page, direction], setPage] = useState([0, 0]);
   const [isHovering, setIsHovering] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const imageIndex = page % images.length;
 
@@ -41,10 +42,10 @@ const Hero = () => {
   };
 
   useEffect(() => {
-    if (isHovering) return;
+    if (isHovering || prefersReducedMotion) return;
     const interval = setInterval(() => paginate(1), 5000);
     return () => clearInterval(interval);
-  }, [page, isHovering]);
+  }, [page, isHovering, prefersReducedMotion]);
 
   const scrollToContact = () => {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
@@ -60,23 +61,25 @@ const Hero = () => {
       {/* Background Image Slider */}
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
-          key={page}
+          key={prefersReducedMotion ? 'static' : page}
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${images[imageIndex]})` }}
           custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.5 } }}
-          drag="x"
+          variants={prefersReducedMotion ? undefined : variants}
+          initial={prefersReducedMotion ? false : 'enter'}
+          animate={prefersReducedMotion ? {} : 'center'}
+          exit={prefersReducedMotion ? undefined : 'exit'}
+          transition={prefersReducedMotion ? undefined : { x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.5 } }}
+          drag={prefersReducedMotion ? false : 'x'}
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={1}
           onDragEnd={(e, { offset, velocity }) => {
+            if (prefersReducedMotion) return;
             const swipe = swipePower(offset.x, velocity.x);
             if (swipe < -swipeConfidenceThreshold) paginate(1);
             else if (swipe > swipeConfidenceThreshold) paginate(-1);
           }}
+          aria-hidden
         />
       </AnimatePresence>
 
@@ -126,6 +129,7 @@ const Hero = () => {
                 whileTap={{ scale: 0.95 }}
                 href="tel:+2348082671454"
                 className="p-1.5 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all duration-300"
+                aria-label="Call Shubby Collections"
               >
                 <Phone size={14} />
               </motion.a>
@@ -135,6 +139,7 @@ const Hero = () => {
                 whileTap={{ scale: 0.95 }}
                 href="mailto:oladepomercy02@gmail.com"
                 className="p-1.5 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all duration-300"
+                aria-label="Email Shubby Collections"
               >
                 <Mail size={14} />
               </motion.a>
@@ -146,6 +151,7 @@ const Hero = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-1.5 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all duration-300"
+                aria-label="WhatsApp Shubby Collections"
               >
                 <MessageCircle size={14} />
               </motion.a>

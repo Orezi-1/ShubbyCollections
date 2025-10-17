@@ -249,6 +249,7 @@ const Contact = () => {
                       ? 'bg-green-50 border border-green-200' 
                       : 'bg-red-50 border border-red-200'
                   }`}
+                  role="alert"
                 >
                   {submitStatus === 'success' ? (
                     <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
@@ -266,11 +267,12 @@ const Contact = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-primary mb-2">
+                    <label className="block text-sm font-medium text-primary mb-2" htmlFor="name-input">
                       Full Name *
                     </label>
                     <input
                       type="text"
+                      id="name-input"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
@@ -281,11 +283,12 @@ const Contact = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-primary mb-2">
+                    <label className="block text-sm font-medium text-primary mb-2" htmlFor="email-input">
                       Email Address *
                     </label>
                     <input
                       type="email"
+                      id="email-input"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
@@ -299,11 +302,12 @@ const Contact = () => {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-primary mb-2">
+                    <label className="block text-sm font-medium text-primary mb-2" htmlFor="phone-input">
                       Phone Number
                     </label>
                     <input
                       type="tel"
+                      id="phone-input"
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
@@ -313,10 +317,11 @@ const Contact = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-primary mb-2">
+                    <label className="block text-sm font-medium text-primary mb-2" htmlFor="service-select">
                       Service Interested *
                     </label>
                     <select
+                      id="service-select"
                       name="service"
                       value={formData.service}
                       onChange={handleInputChange}
@@ -335,10 +340,11 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-primary mb-2">
+                  <label className="block text-sm font-medium text-primary mb-2" htmlFor="message-input">
                     Message *
                   </label>
                   <textarea
+                    id="message-input"
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}

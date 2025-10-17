@@ -132,7 +132,8 @@ const Portfolio = ({ onImageClick }) => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {filteredItems.map((item, index) => (
-            <motion.div
+            <motion.button
+              type="button"
               key={item.id}
               layout
               initial={{ opacity: 0, scale: 0.9 }}
@@ -140,14 +141,18 @@ const Portfolio = ({ onImageClick }) => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -10 }}
-              className="group cursor-pointer"
+              className="group cursor-pointer text-left"
               onClick={() => onImageClick(item)}
+              aria-label={`Open image: ${item.title}`}
             >
               <div className="relative overflow-hidden rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="aspect-[4/5] overflow-hidden">
                   <img
                     src={item.image}
                     alt={item.title}
+                    loading="lazy"
+                    decoding="async"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
@@ -166,7 +171,7 @@ const Portfolio = ({ onImageClick }) => {
                   <p className="text-gray-600 text-sm">{item.description}</p>
                 </div>
               </div>
-            </motion.div>
+            </motion.button>
           ))}
         </motion.div>
 
