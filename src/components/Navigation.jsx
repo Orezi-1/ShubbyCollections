@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,7 +18,7 @@ const Navigation = () => {
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
       setIsOpen(false);
     }
   };
@@ -31,11 +32,12 @@ const Navigation = () => {
 
   return (
     <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
+      initial={prefersReducedMotion ? false : { y: -100 }}
+      animate={prefersReducedMotion ? {} : { y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
       }`}
+      aria-label="Primary navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -67,6 +69,9 @@ const Navigation = () => {
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 rounded-lg text-primary hover:bg-accent/10 transition-colors"
+            aria-expanded={isOpen}
+            aria-controls="primary-navigation"
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </motion.button>
@@ -79,6 +84,7 @@ const Navigation = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white border-t border-gray-200"
+            id="primary-navigation"
           >
             <div className="py-4 space-y-2">
               {navItems.map((item) => (

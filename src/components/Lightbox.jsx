@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Lightbox = ({ image, onClose }) => {
+  const closeButtonRef = useRef(null);
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
@@ -12,6 +13,8 @@ const Lightbox = ({ image, onClose }) => {
 
     document.addEventListener('keydown', handleEscape);
     document.body.style.overflow = 'hidden';
+    // Focus trap entry point
+    closeButtonRef.current?.focus();
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
@@ -29,6 +32,9 @@ const Lightbox = ({ image, onClose }) => {
         exit={{ opacity: 0 }}
         onClick={onClose}
         className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lightbox-title"
       >
         {/* Close Button */}
         <motion.button
@@ -38,6 +44,8 @@ const Lightbox = ({ image, onClose }) => {
           whileTap={{ scale: 0.95 }}
           onClick={onClose}
           className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center backdrop-blur-sm transition-colors duration-300 z-10"
+          aria-label="Close image dialog"
+          ref={closeButtonRef}
         >
           <X className="w-6 h-6" />
         </motion.button>
@@ -55,11 +63,13 @@ const Lightbox = ({ image, onClose }) => {
               src={image.image}
               alt={image.title}
               className="w-full h-auto max-h-[70vh] object-cover"
+              loading="eager"
+              fetchpriority="high"
             />
             
             {/* Image Overlay Info */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
-              <h3 className="text-2xl font-bold mb-2">{image.title}</h3>
+              <h3 id="lightbox-title" className="text-2xl font-bold mb-2">{image.title}</h3>
               <p className="text-white/80">{image.description}</p>
             </div>
           </div>

@@ -60,6 +60,9 @@ const About = () => {
                 <img
                   src="https://iemullwfxjbdimmebaie.supabase.co/storage/v1/object/public/Shubby%20Images/IMG_3258.jpg"
                   alt="Shubby - Professional Fashion Stylist in vibrant African print outfit"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(min-width: 1024px) 50vw, 100vw"
                   className="w-full h-full object-cover"
                 />
               </motion.div>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Phone, Mail, MessageCircle, X } from 'lucide-react';
 
 const StickyContactButton = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,9 +45,9 @@ const StickyContactButton = () => {
       <AnimatePresence>
         {isExpanded && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.8, y: 20 }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.8, y: 20 }}
             className="mb-4 space-y-3"
           >
             {contactOptions.map((option, index) => (
@@ -72,12 +73,14 @@ const StickyContactButton = () => {
       </AnimatePresence>
 
       <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={prefersReducedMotion ? undefined : { scale: 1.1 }}
+        whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
         onClick={() => setIsExpanded(!isExpanded)}
         className={`w-14 h-14 bg-accent text-primary rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${
           isExpanded ? 'rotate-45' : 'rotate-0'
         }`}
+        aria-expanded={isExpanded}
+        aria-label={isExpanded ? 'Close quick contact options' : 'Open quick contact options'}
       >
         {isExpanded ? (
           <X className="w-6 h-6" />
